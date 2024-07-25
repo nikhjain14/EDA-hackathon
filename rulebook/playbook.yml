@@ -1,0 +1,14 @@
+---
+- name: Automatic Remediation of a webserver
+  hosts: localhost
+  sources:
+    - name: listen for alerts
+      ansible.eda.alertmanager:
+        host: 0.0.0.0
+        port: 5000
+  rules:
+    - name: server down
+      condition: event.alert.labels.job == "server" and event.alert.status == "firing"
+      action:
+        run_playbook:
+          name: remediation-playbooks/server-playbook.yml
